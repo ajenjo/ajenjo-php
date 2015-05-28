@@ -1,0 +1,21 @@
+{
+    "name": "jondotsoy/ajenjo",
+    "description": "Esto es un conector para tu ajenjo.",
+    "authors": [
+        {
+            "name": "Jon Dotsoy",
+            "email": "hi@jon.soy"
+        }
+    ],
+    "minimum-stability": "stable",
+    "license": "MIT",
+    "autoload": {
+      "psr-0": {
+        "HelloWorld": "src/"
+      }
+    },
+    "scripts": {
+      "test": "phpunit tests/sayhelloTest"
+    },
+    "require": {}
+}
