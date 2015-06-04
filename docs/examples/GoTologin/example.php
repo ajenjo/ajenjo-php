@@ -2,6 +2,8 @@
 require "../../../vendor/autoload.php";
 require "../../../src/ajenjo/ajenjo.php";
 
+// require "vendor/autoload.php";
+
 use \ajenjo\ajenjo;
 
 // Crea a new ajenjo
@@ -9,10 +11,11 @@ $ajenjo = new ajenjo("http://ajenjo:1337/");
 
 
 /******************************************************************************/
-$link_to_login = $ajenjo->refreshURLs()->urls->login;
+$link_to_login = $ajenjo->urls->login;
 /******************************************************************************/
 
-?><!DOCTYPE html>
+?>
+<!DOCTYPE html>
 <html lang="es">
   <head>
     <meta charset="UTF-8">

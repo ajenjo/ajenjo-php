@@ -13,6 +13,8 @@ $data_session = $ajenjo->data_session->body;
 
 $url_status = $ajenjo->urls->status;
 
+$status = $data_session->login;
+
 $session_data = $ajenjo->data_cookie;
 /******************************************************************************/
 
