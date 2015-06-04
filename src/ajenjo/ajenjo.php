@@ -80,6 +80,8 @@ class ajenjo {
     }
     if ($localURL == null) {
       $this->localURL = "http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+    } else {
+      $this->localURL = $localURL;
     }
 
     $this->data_cookie = new cookie();
