@@ -7,7 +7,7 @@ require "../../../src/ajenjo/ajenjo.php";
 use \ajenjo\ajenjo;
 
 // Crea a new ajenjo
-$ajenjo = new ajenjo("http://ajenjo:1337/");
+$ajenjo = new ajenjo("http://ajenjo:30700/");
 
 
 /******************************************************************************/
@@ -35,6 +35,11 @@ $link_to_login = $ajenjo->urls->login;
   <body>
     <div class="container center-align">
       <h1>Inicia Sesión</h1>
+
+      <ul>
+        <li><a href="../watchSession/example.php">Ver Status</a></li>
+      </ul>
+
       <a class="waves-effect waves-light btn blue accent-2" href="<?php echo $link_to_login ?>" target="_blank">Iniciar Sesión</a>
       <h4>o ingresando a</h4>
       <div class="section white-text blue accent-1"><?php echo $link_to_login ?></div>

@@ -115,16 +115,18 @@ class ajenjo {
   private function getKeyAppAjenjoByCookie() {
     $ajenjoSessionID = "";
 
-    $encodeFullIDCookie = urldecode($this->data_cookie->cookies[$this->name_cookie_session_key_name]);
+    if (isset($this->data_cookie->cookies[$this->name_cookie_session_key_name])) {
+      $encodeFullIDCookie = urldecode($this->data_cookie->cookies[$this->name_cookie_session_key_name]);
 
-    $re = "/s\\:(.+)?\\..+/i";
-    $str = $encodeFullIDCookie;
+      $re = "/s\\:(.+)?\\..+/i";
+      $str = $encodeFullIDCookie;
 
-    if (preg_match($re, $str, $matches) == 1){
-      if (isset($matches[1])) {
-        $ajenjoSessionID = $matches[1];
-      }
-    };
+      if (preg_match($re, $str, $matches) == 1){
+        if (isset($matches[1])) {
+          $ajenjoSessionID = $matches[1];
+        }
+      };
+    }
 
     return $ajenjoSessionID;
   }
@@ -170,6 +172,8 @@ class ajenjo {
     if (isset($cookieObtenido)) {
       $this->setSesionKeyOfCookie($cookieObtenido);
     }
+
+    $this->refreshURLs();
 
     return $this;
   }
