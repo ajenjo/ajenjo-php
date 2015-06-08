@@ -5,7 +5,7 @@ require "../../../src/ajenjo/ajenjo.php";
 use \ajenjo\ajenjo;
 
 // Crea a new ajenjo
-$ajenjo = new ajenjo("http://ajenjo:1337/");
+$ajenjo = new ajenjo("http://ajenjo:30700/");
 
 
 /******************************************************************************/
