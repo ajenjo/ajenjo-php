@@ -16,13 +16,21 @@ use \stdClass;
 class ajenjo {
 
   /**
-   * Contiene la url con la que permite comunicarse con el servidor.
+   * URL conexión publica del servidor ajenjo.
    *
    * @example https://sessions.ajenjo/service/
    * @var string
    * @access private
    */
   private $url_ajenjo = null;
+
+  /**
+   * URL de conexión interna del servidor ajenjo.
+   *
+   * @var string
+   * @access private
+   */
+  private $url_ajenjo_local = null;
 
   /**
    * Contiene una cadena que permite que se puede validar la comunicación con el servidor del servicio.
@@ -71,13 +79,20 @@ class ajenjo {
    */
   public $name_session_key = "b_session_ajenjo";
 
-  public function __construct($url = null, $token = null, $localURL = null) {
-    if ($url == null) {
-      $url = getenv('AJENJO_CLI_URL') ? getenv('AJENJO_CLI_URL') : 'http:///';
+  public function __construct($URL = null, $token = null, $localURL = null, $URLlocal = null) {
+
+    if ($URL == null) {
+      $URL = isset(getenv('AJENJO_CLI_URL')) ? getenv('AJENJO_CLI_URL') : 'http:///';
     }
+
+    if ($URLlocal == null) {
+      $URLlocal = isset(getenv('AJENJO_CLI_URL_LOCAL')) ? getenv('AJENJO_CLI_URL_LOCAL') : $URL ;
+    }
+
     if ($token == null) {
-      $token = getenv('AJENJO_CLI_TOKEN');
+      $token = isset(getenv('AJENJO_CLI_TOKEN')) ? getenv('AJENJO_CLI_TOKEN') : null;
     }
+
     if ($localURL == null) {
       $this->localURL = "http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
     } else {
@@ -87,7 +102,8 @@ class ajenjo {
     $this->data_cookie = new cookie();
     $this->data_session = new stdClass;
     $this->urls = new stdClass;
-    $this->url_ajenjo = $url;
+    $this->url_ajenjo = $URL;
+    $this->url_ajenjo_local = $URLlocal;
     $this->key_token = $token;
 
     $this->getSesionKeyOfCookie();
@@ -109,7 +125,7 @@ class ajenjo {
       implode("=", ["r",urlencode($this->localURL)]),
       ]);
 
-    $this->urls->status = $this->url_ajenjo . $this->request_paths["status"];
+    $this->urls->status = $this->url_ajenjo_local . $this->request_paths["status"];
 
     return $this;
   }
@@ -204,8 +220,8 @@ class ajenjo {
     return $this->key_token;
   }
 
-  static public function createSession($url = null, $token = null) {
-    return new ajenjo($url, $token);
+  static public function createSession($URL = null, $token = null) {
+    return new ajenjo($URL, $token);
   }
 
   // public function aget(){
