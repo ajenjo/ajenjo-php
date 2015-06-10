@@ -82,15 +82,15 @@ class ajenjo {
   public function __construct($URL = null, $token = null, $localURL = null, $URLlocal = null) {
 
     if ($URL == null) {
-      $URL = isset(getenv('AJENJO_CLI_URL')) ? getenv('AJENJO_CLI_URL') : 'http:///';
+      $URL = !empty(getenv('AJENJO_CLI_URL')) ? getenv('AJENJO_CLI_URL') : 'http:///';
     }
 
     if ($URLlocal == null) {
-      $URLlocal = isset(getenv('AJENJO_CLI_URL_LOCAL')) ? getenv('AJENJO_CLI_URL_LOCAL') : $URL ;
+      $URLlocal = !empty(getenv('AJENJO_CLI_URL_LOCAL')) ? getenv('AJENJO_CLI_URL_LOCAL') : $URL ;
     }
 
     if ($token == null) {
-      $token = isset(getenv('AJENJO_CLI_TOKEN')) ? getenv('AJENJO_CLI_TOKEN') : null;
+      $token = !empty(getenv('AJENJO_CLI_TOKEN')) ? getenv('AJENJO_CLI_TOKEN') : null;
     }
 
     if ($localURL == null) {
