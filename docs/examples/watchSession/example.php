@@ -5,7 +5,10 @@ require "../../../src/ajenjo/ajenjo.php";
 use \ajenjo\ajenjo;
 
 // Crea a new ajenjo
-$ajenjo = new ajenjo("http://ajenjo:30700/");
+$ajenjo = new ajenjo([
+  // "mode" => "test"
+  // "URLConnect" => "http://ajenjo:30700/"
+  ]);
 
 
 /******************************************************************************/
