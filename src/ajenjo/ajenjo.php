@@ -79,30 +79,67 @@ class ajenjo {
    */
   public $name_session_key = "b_session_ajenjo";
 
-  public function __construct($URL = null, $token = null, $localURL = null, $URLlocal = null) {
+  public function __construct($config){
+    // $URL = null, $token = null, $localURL = null, $URLlocal = null) {
 
-    if ($URL == null) {
-      $URL = !empty(getenv('AJENJO_CLI_URL')) ? getenv('AJENJO_CLI_URL') : 'http:///';
+    $config = (Object) $config;
+    if (!$config->mode) {
+      $config->mode = !empty(getenv('AJENJO_MODE')) ? getenv('AJENJO_MODE') : "production";
     }
 
-    if ($URLlocal == null) {
-      $URLlocal = !empty(getenv('AJENJO_CLI_URL_LOCAL')) ? getenv('AJENJO_CLI_URL_LOCAL') : $URL ;
+    // Put mode status
+    if ($config->mode) {
+      switch ($config->mode) {
+        case 'develop':
+        case 'dev':
+        case 'deve':
+          $config->mode = 'develop';
+          break;
+
+        case 'dem':
+        case 'demo':
+        case 'demostration':
+        case 'test':
+        case 'exp':
+        case 'experiment':
+          $config->mode = 'demo';
+          break;
+
+        default:
+          $config->mode = 'production';
+          break;
+      }
     }
 
-    if ($token == null) {
-      $token = !empty(getenv('AJENJO_CLI_TOKEN')) ? getenv('AJENJO_CLI_TOKEN') : null;
+
+    if (!$config->URLConnect) {
+      $config->URLConnect = !empty(getenv('AJENJO_CLI_URL')) ? getenv('AJENJO_CLI_URL') : 'http:///';
     }
 
-    if ($localURL == null) {
-      $this->localURL = "http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+    if (!$config->URLlocal) {
+      $config->URLlocal = !empty(getenv('AJENJO_CLI_URL_LOCAL')) ? getenv('AJENJO_CLI_URL_LOCAL') : $config->URLConnect;
     }
 
-    $this->data_cookie = new cookie();
-    $this->data_session = new stdClass;
-    $this->urls = new stdClass;
-    $this->url_ajenjo = $URL;
-    $this->url_ajenjo_local = $URLlocal;
-    $this->key_token = $token;
+    if (!$config->token) {
+      $config->token = !empty(getenv('AJENJO_CLI_TOKEN')) ? getenv('AJENJO_CLI_TOKEN') : null;
+    }
+
+    if (!$config->localURL) {
+      $config->localURL = "http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+    }
+
+    var_dump($config);
+
+    exit();
+
+
+    $this->data_cookie      = new cookie();
+    $this->data_session     = new stdClass;
+    $this->urls             = new stdClass;
+    $this->url_ajenjo       = $config->URLConnect;
+    $this->url_ajenjo_local = $config->URLlocal;
+    $this->key_token        = $config->token;
+    $this->localURL         = $config->localURL;
 
     $this->getSesionKeyOfCookie();
     $this->refreshURLs();
