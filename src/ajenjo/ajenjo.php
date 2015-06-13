@@ -80,9 +80,8 @@ class ajenjo {
   public $name_session_key = "b_session_ajenjo";
 
   public function __construct($config){
-    // $URL = null, $token = null, $localURL = null, $URLlocal = null) {
-
     $config = (Object) $config;
+
     if (!$config->mode) {
       $config->mode = !empty(getenv('AJENJO_MODE')) ? getenv('AJENJO_MODE') : "production";
     }
