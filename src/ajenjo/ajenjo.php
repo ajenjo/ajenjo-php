@@ -83,62 +83,78 @@ class ajenjo {
     $config = (Object) $config;
 
     if (!$config->mode) {
-      $config->mode = !empty(getenv('AJENJO_MODE')) ? getenv('AJENJO_MODE') : "production";
+      $config->mode = getenv('AJENJO_CLI_MODE') ? getenv('AJENJO_CLI_MODE') : "production";
+    }
+
+    if (!$config->mode_status) {
+      $config->mode_status = getenv('AJENJO_CLI_MODE_STATUS') ? getenv('AJENJO_CLI_MODE_STATUS') : 'online';
     }
 
     // Put mode status
-    if ($config->mode) {
-      switch ($config->mode) {
-        case 'develop':
-        case 'dev':
-        case 'deve':
-          $config->mode = 'develop';
-          break;
+    switch ($config->mode) {
+      case 'develop':
+      case 'dev':
+      case 'deve':
+        $config->mode = 'develop';
+        break;
 
-        case 'dem':
-        case 'demo':
-        case 'demostration':
-        case 'test':
-        case 'exp':
-        case 'experiment':
-          $config->mode = 'demo';
-          break;
+      case 'dem':
+      case 'demo':
+      case 'demostration':
+      case 'test':
+      case 'exp':
+      case 'experiment':
+        $config->mode = 'demo';
+        break;
 
-        default:
-          $config->mode = 'production';
-          break;
-      }
+      default:
+        $config->mode = 'production';
+        break;
     }
 
+    switch ($config->mode_status) {
+      case 'off':
+      case 'offline':
+        $config->mode_status = "offline";
+        break;
+
+      case 'on':
+      case 'online':
+      default:
+        $config->mode_status = "online";
+        break;
+    }
 
     if (!$config->URLConnect) {
-      $config->URLConnect = !empty(getenv('AJENJO_CLI_URL')) ? getenv('AJENJO_CLI_URL') : 'http:///';
+      $config->URLConnect = getenv('AJENJO_CLI_URL_CONNECT') ? getenv('AJENJO_CLI_URL_CONNECT') : 'http:///';
     }
 
     if (!$config->URLlocal) {
-      $config->URLlocal = !empty(getenv('AJENJO_CLI_URL_LOCAL')) ? getenv('AJENJO_CLI_URL_LOCAL') : $config->URLConnect;
+      $config->URLlocal = getenv('AJENJO_CLI_URL_CONNECT_LOCAL') ? getenv('AJENJO_CLI_URL_CONNECT_LOCAL') : $config->URLConnect;
     }
 
     if (!$config->token) {
-      $config->token = !empty(getenv('AJENJO_CLI_TOKEN')) ? getenv('AJENJO_CLI_TOKEN') : null;
+      $config->token = getenv('AJENJO_CLI_TOKEN') ? getenv('AJENJO_CLI_TOKEN') : null;
     }
 
     if (!$config->localURL) {
       $config->localURL = "http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
     }
 
-    var_dump($config);
 
-    exit();
+    // var_dump($config);
+    // exit();
 
 
     $this->data_cookie      = new cookie();
     $this->data_session     = new stdClass;
-    $this->urls             = new stdClass;
-    $this->url_ajenjo       = $config->URLConnect;
-    $this->url_ajenjo_local = $config->URLlocal;
     $this->key_token        = $config->token;
     $this->localURL         = $config->localURL;
+    $this->mode             = $config->mode;
+    $this->mode_status      = $config->mode_status;
+    $this->url_ajenjo       = $config->URLConnect;
+    $this->url_ajenjo_local = $config->URLlocal;
+    $this->urls             = new stdClass;
 
     $this->getSesionKeyOfCookie();
     $this->refreshURLs();
@@ -221,7 +237,7 @@ class ajenjo {
   private function catchCookie($request_parameters, $time_live_session = 0) {
     $cookieObtenido = $request_parameters->headers["set-cookie"];
 
-    if (isset($cookieObtenido)) {
+    if ($cookieObtenido) {
       $this->setSesionKeyOfCookie($cookieObtenido);
     }
 
@@ -235,11 +251,53 @@ class ajenjo {
 
     $reqMp = Request::get($this->urls->status);
 
-    if (isset($this->data_cookie)) {
+    if ($this->data_cookie) {
       $reqMp = $reqMp->addHeader('Cookie',$this->data_cookie->toStringOnlyCookie());
     }
 
-    $req = $reqMp->send();
+    // Send message
+    if ($this->mode == "production") {
+      $req = $reqMp->send();
+    } else {
+      if ($this->mode_status == 'online') {
+        $req = (Object) [
+          "body" => [
+            "login" => true,
+            "momory" => [
+                "sesionactive" => true
+            ],
+            "user" => [
+                "groups" => [
+                    [
+                        "name" => "ADMIN",
+                        "title" => "ADMIN",
+                        "description" => null,
+                    ]
+                ],
+                "permissions" => [],
+                "user" => "adm",
+                "name" => "admin",
+                "lastname" => null,
+                "secondLastName" => null,
+                "email" => "em@il.com",
+                "status" => true,
+                "other" => [],
+            ],
+          ],
+          "headers" => [],
+        ];
+      } else {
+        $req = (Object) [
+          "body" => [
+            "login" => false,
+          ],
+          "headers" => [
+            "set-cookie" => "ajenjo.session=s%3A0000.0000; Path=/; Expires=Tue, 14 Jul 2015 04:14:31 GMT; HttpOnly",
+          ],
+        ];
+      }
+    }
+
     $this->catchCookie($req);
     $this->data_session = $req;
 

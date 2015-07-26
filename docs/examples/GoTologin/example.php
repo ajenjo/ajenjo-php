@@ -1,13 +1,17 @@
 <?php
+date_default_timezone_set('America/Santiago');
+
 require "../../../vendor/autoload.php";
 require "../../../src/ajenjo/ajenjo.php";
-
-// require "vendor/autoload.php";
 
 use \ajenjo\ajenjo;
 
 // Crea a new ajenjo
-$ajenjo = new ajenjo("http://ajenjo:30700/");
+$ajenjo = new ajenjo([
+  // "mode" => "demo",
+  "URLConnect" => "http://postulacion.cottolengo.cl:8080/",
+  // "URL" => "http://ajenjo:30700/"
+  ]);
 
 
 /******************************************************************************/
